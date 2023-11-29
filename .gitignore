@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# Ignore the build directory
+build/
+
+# Ignore created images
+*.ppm
