@@ -2,7 +2,7 @@
 #define VEC3_H
 
 #include <cmath>
-#include <iosteam>
+#include <iostream>
 
 using std::sqrt;
 
