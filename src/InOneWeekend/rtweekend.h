@@ -22,6 +22,7 @@ inline double degrees_to_radius(double degrees) { return degrees * pi / 180; }
 
 // Common Headers
 
+#include "interval.h"
 #include "ray.h"
 #include "vec3.h"
 
