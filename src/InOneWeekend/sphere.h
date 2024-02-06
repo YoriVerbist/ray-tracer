@@ -19,7 +19,7 @@ class sphere : public hittable {
             return false;
         auto sqrtd = sqrt(discriminant);
 
-        // Fidn the nearest root that liest in the acceptable range
+        // Find the nearest root that liest in the acceptable range
         auto root = (-half_b - sqrtd) / a;
         if (!ray_t.surrounds(root)) {
             root = (-half_b + sqrtd) / a;
