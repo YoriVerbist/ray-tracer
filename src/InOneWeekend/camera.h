@@ -64,13 +64,13 @@ class camera {
 
         // Calculate the horizontal and vertical delta vectors from pixel to
         // pixel
-        auto pixel_delta_u = viewport_u / image_width;
-        auto pixel_delta_v = viewport_v / image_height;
+        pixel_delta_u = viewport_u / image_width;
+        pixel_delta_v = viewport_v / image_height;
 
         // Calculate the location of the upper left pixel
         auto viewport_upper_left = center - vec3(0, 0, focal_length) -
                                    (viewport_u / 2) - (viewport_v / 2);
-        auto pixel00_loc =
+        pixel00_loc =
             viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
     }
 
