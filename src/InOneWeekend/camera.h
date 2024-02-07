@@ -5,7 +5,6 @@
 
 #include "color.h"
 #include "hittable.h"
-#include "vec3.h"
 
 #include <iostream>
 
@@ -27,13 +26,14 @@ class camera {
             for (int i = 0; i < image_width; ++i) {
                 color pixel_color(0, 0, 0);
                 for (int sample = 0; sample < samples_per_pixel; ++sample) {
+                    /* std::cout << "pixel_color: " << pixel_color << std::endl;
+                     */
                     ray r = get_ray(i, j);
                     pixel_color += ray_color(r, max_depth, world);
                 }
                 write_color(std::cout, pixel_color, samples_per_pixel);
             }
         }
-
         std::clog << "\rDone.                  \n";
     }
 
@@ -49,7 +49,7 @@ class camera {
         image_height = static_cast<int>(image_width / aspect_ratio);
         image_height = (image_height < 1) ? 1 : image_height;
 
-        auto camera_center = point3(0, 0, 0);
+        center = point3(0, 0, 0);
 
         // Determine viewport_dimensions
         auto focal_length = 1.0;
@@ -68,11 +68,10 @@ class camera {
         auto pixel_delta_v = viewport_v / image_height;
 
         // Calculate the location of the upper left pixel
-        auto viewport_upper_left_corner = camera_center -
-                                          vec3(0, 0, focal_length) -
-                                          (viewport_u / 2) - (viewport_v / 2);
+        auto viewport_upper_left = center - vec3(0, 0, focal_length) -
+                                   (viewport_u / 2) - (viewport_v / 2);
         auto pixel00_loc =
-            viewport_upper_left_corner + 0.5 * (pixel_delta_u + pixel_delta_v);
+            viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
     }
 
     ray get_ray(int i, int j) const {
@@ -97,15 +96,15 @@ class camera {
     }
 
     color ray_color(const ray &r, int depth, const hittable &world) const {
-        hit_record rec;
-
         // If we've exceeded the ray bounce limit, no more light is gathered.
         if (depth <= 0) {
             return color(0, 0, 0);
         }
 
+        hit_record rec;
+
         if (world.hit(r, interval(0.001, infinity), rec)) {
-            vec3 direction = random_on_hemisphere(rec.normal);
+            vec3 direction = rec.normal + random_unit_vector();
             return 0.5 * ray_color(ray(rec.p, direction), depth - 1, world);
         }
 
