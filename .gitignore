@@ -36,3 +36,9 @@ build/
 
 # Ignore created images
 *.ppm
+
+# Ignore CMake files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile

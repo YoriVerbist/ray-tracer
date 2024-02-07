@@ -9,7 +9,7 @@ cmake_minimum_required ( VERSION 3.1.0...3.27.0 )
 project ( RTWeekend LANGUAGES CXX )
 
 # Set to C++11
-set ( CMAKE_CXX_STANDARD          11 )
+set ( CMAKE_CXX_STANDARD          17 )
 set ( CMAKE_CXX_STANDARD_REQUIRED ON )
 set ( CMAKE_CXX_EXTENSIONS        OFF )
 
@@ -27,14 +27,14 @@ set ( SOURCE_ONE_WEEKEND
   src/InOneWeekend/hittable.h
   src/InOneWeekend/hittable_list.h
   src/InOneWeekend/interval.h
-  src/InOneWeekend/material.h
+  # src/InOneWeekend/material.h
   src/InOneWeekend/ray.h
-  src/InOneWeekend/rtw_stb_image.h
+  # src/InOneWeekend/rtw_stb_image.h
   src/InOneWeekend/rtweekend.h
   src/InOneWeekend/sphere.h
   src/InOneWeekend/vec3.h
 
-  src/InOneWeekend/main.cc
+  src/InOneWeekend/main.cpp
 )
 
 # set ( SOURCE_NEXT_WEEK
