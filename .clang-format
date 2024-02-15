@@ -1,2 +1,12 @@
+Language: Cpp
 BasedOnStyle: LLVM
 IndentWidth: 4
+ColumnLimit: 80
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterNamespace: "false"
+  AfterClass: "false"
+  BeforeElse: "false"
+  AfterControlStatement: "false"
+  AfterFunction: "false"
+  BeforeCatch: "false"
