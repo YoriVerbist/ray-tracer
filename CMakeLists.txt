@@ -22,19 +22,20 @@ set ( CMAKE_CXX_EXTENSIONS        OFF )
 set ( SOURCE_ONE_WEEKEND
   # src/external/stb_image.h
 
-  src/InOneWeekend/camera.h
-  src/InOneWeekend/color.h
-  src/InOneWeekend/hittable.h
-  src/InOneWeekend/hittable_list.h
-  src/InOneWeekend/interval.h
-  src/InOneWeekend/material.h
-  src/InOneWeekend/ray.h
+  src/camera.h
+  src/color.h
+  src/hittable.h
+  src/hittable_list.h
+  src/interval.h
+  src/material.h
+  src/ray.h
   # src/InOneWeekend/rtw_stb_image.h
-  src/InOneWeekend/rtweekend.h
-  src/InOneWeekend/sphere.h
-  src/InOneWeekend/vec3.h
+  src/rtweekend.h
+  src/sphere.h
+  src/vec3.h
+  src/aabb.h
 
-  src/InOneWeekend/main.cpp
+  src/main.cpp
 )
 
 
@@ -63,7 +64,7 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 # Executables
-add_executable(inOneWeekend      ${EXTERNAL} ${SOURCE_ONE_WEEKEND})
+add_executable(ray_tracer      ${EXTERNAL} ${SOURCE_ONE_WEEKEND})
 # add_executable(cos_cubed         src/TheRestOfYourLife/cos_cubed.cc         )
 # add_executable(cos_density       src/TheRestOfYourLife/cos_density.cc       )
 # add_executable(integrate_x_sq    src/TheRestOfYourLife/integrate_x_sq.cc    )
