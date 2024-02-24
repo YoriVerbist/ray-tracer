@@ -36,6 +36,9 @@ set ( SOURCE_ONE_WEEKEND
   src/aabb.h
   src/bvh.h
   src/quad.h
+  src/constant_medium.h
+  src/perlin.h
+  src/texture.h
 
   src/main.cpp
 )
