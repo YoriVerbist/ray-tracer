@@ -29,12 +29,13 @@ set ( SOURCE_ONE_WEEKEND
   src/interval.h
   src/material.h
   src/ray.h
-  # src/InOneWeekend/rtw_stb_image.h
+  src/rtw_stb_image.h
   src/rtweekend.h
   src/sphere.h
   src/vec3.h
   src/aabb.h
   src/bvh.h
+  src/quad.h
 
   src/main.cpp
 )
