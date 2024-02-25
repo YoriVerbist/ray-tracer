@@ -9,13 +9,11 @@
 
 class quad : public hittable {
   public:
-    quad(const point3 &_Q, const vec3 &_u, const vec3 &_v,
-         shared_ptr<material> m)
-        : Q(_Q), u(_u), v(_v), mat(m) {
+    quad(const point3 &_Q, const vec3 &_u, const vec3 &_v, shared_ptr<material> m) : Q(_Q), u(_u), v(_v), mat(m) {
         auto n = cross(u, v);
         normal = unit_vector(n);
-        D = dot(normal, Q);
-        w = n / dot(n, n);
+        D      = dot(normal, Q);
+        w      = n / dot(n, n);
 
         set_bounding_box();
     }
@@ -38,17 +36,17 @@ class quad : public hittable {
 
         // Determine the hit point lies within the planar shape using its plane
         // coordinates
-        auto intersection = r.at(t);
+        auto intersection        = r.at(t);
         vec3 planar_hitpt_vector = intersection - Q;
-        auto alpha = dot(w, cross(planar_hitpt_vector, v));
-        auto beta = dot(w, cross(u, planar_hitpt_vector));
+        auto alpha               = dot(w, cross(planar_hitpt_vector, v));
+        auto beta                = dot(w, cross(u, planar_hitpt_vector));
 
         if (!is_interior(alpha, beta, rec))
             return false;
 
         // Ray hits the 2D shape; set the rest of the hit record and return true
-        rec.t = t;
-        rec.p = intersection;
+        rec.t   = t;
+        rec.p   = intersection;
         rec.mat = mat;
         rec.set_face_normal(r, normal);
 
@@ -78,17 +76,14 @@ class quad : public hittable {
     vec3 w;
 };
 
-inline shared_ptr<hittable_list> box(const point3 &a, const point3 &b,
-                                     shared_ptr<material> mat) {
+inline shared_ptr<hittable_list> box(const point3 &a, const point3 &b, shared_ptr<material> mat) {
     // Returns the 3D box that contains the two oppisite vertices a & b
     auto sides = make_shared<hittable_list>();
 
     // Construct the two opposite vertices with the minimum and maximum
     // coordinates
-    auto min =
-        point3(fmin(a.x(), b.x()), fmin(a.y(), b.y()), fmin(a.z(), b.z()));
-    auto max =
-        point3(fmax(a.x(), b.x()), fmax(a.y(), b.y()), fmax(a.z(), b.z()));
+    auto min = point3(fmin(a.x(), b.x()), fmin(a.y(), b.y()), fmin(a.z(), b.z()));
+    auto max = point3(fmax(a.x(), b.x()), fmax(a.y(), b.y()), fmax(a.z(), b.z()));
 
     auto dx = vec3(max.x() - min.x(), 0, 0);
     auto dy = vec3(0, max.y() - min.y(), 0);

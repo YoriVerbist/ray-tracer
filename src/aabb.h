@@ -9,8 +9,7 @@ class aabb {
     interval x, y, z;
     aabb() {} // The default AABB is empty, since intervals are empty by default
 
-    aabb(const interval &ix, const interval &iy, const interval &iz)
-        : x(ix), y(iy), z(iz) {}
+    aabb(const interval &ix, const interval &iy, const interval &iz) : x(ix), y(iy), z(iz) {}
 
     aabb(const point3 &a, const point3 &b) {
         // Treat the two points a and b as extremes for the bounding box, so we
@@ -29,7 +28,7 @@ class aabb {
     aabb pad() {
         // Return an AABB that has no side narrower than some delta, padding if
         // necessary
-        double delta = 0.0001;
+        double delta   = 0.0001;
         interval new_x = (x.size() >= delta) ? x : x.expand(delta);
         interval new_y = (y.size() >= delta) ? y : y.expand(delta);
         interval new_z = (z.size() >= delta) ? z : z.expand(delta);
@@ -47,7 +46,7 @@ class aabb {
 
     bool hit(const ray &r, interval ray_t) const {
         for (int a = 0; a < 3; a++) {
-            auto invD = 1 / r.direction()[a];
+            auto invD   = 1 / r.direction()[a];
             auto origin = r.origin()[a];
 
             auto t0 = (axis(a).min - origin) * invD;

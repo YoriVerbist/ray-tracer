@@ -50,8 +50,7 @@ class rtw_image {
         if (load("../../../../../../images/" + filename))
             return;
 
-        std::cerr << "ERROR: Could not load image file '" << image_filename
-                  << "'.\n";
+        std::cerr << "ERROR: Could not load image file '" << image_filename << "'.\n";
     }
 
     ~rtw_image() { STBI_FREE(data); }
@@ -61,8 +60,7 @@ class rtw_image {
         // succeeded.
         auto n = bytes_per_pixel; // Dummy out parameter: original components
                                   // per pixel
-        data = stbi_load(filename.c_str(), &image_width, &image_height, &n,
-                         bytes_per_pixel);
+        data               = stbi_load(filename.c_str(), &image_width, &image_height, &n, bytes_per_pixel);
         bytes_per_scanline = image_width * bytes_per_pixel;
         return data != nullptr;
     }
