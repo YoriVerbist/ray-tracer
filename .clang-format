@@ -13,3 +13,4 @@ BraceWrapping:
 AlignConsecutiveAssignments: "true"
 AlignTrailingComments: "true"
 AllowAllParametersOfDeclarationOnNextLine: "false"
+PointerAlignment: Left

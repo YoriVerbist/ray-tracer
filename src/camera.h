@@ -25,7 +25,7 @@ class camera {
     double defocus_angle = 0;  // Variation angle of rays through each pixel
     double focus_dist    = 10; // Distance from camera to lookfrom point to plane of perfect focus
 
-    void render(const hittable &world) {
+    void render(const hittable& world, const hittable& lights) {
         initialize();
 
         std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
@@ -34,11 +34,11 @@ class camera {
             std::clog << "\rScanlines remaining: " << (image_height - j) << ' ' << std::flush;
             for (int i = 0; i < image_width; ++i) {
                 color pixel_color(0, 0, 0);
-                for (int sample = 0; sample < samples_per_pixel; ++sample) {
-                    /* std::cout << "pixel_color: " << pixel_color << std::endl;
-                     */
-                    ray r = get_ray(i, j);
-                    pixel_color += ray_color(r, max_depth, world);
+                for (int s_j = 0; s_j < sqrt_spp; ++s_j) {
+                    for (int s_i = 0; s_i < sqrt_spp; ++s_i) {
+                        ray r = get_ray(i, j, s_i, s_j);
+                        pixel_color += ray_color(r, max_depth, world);
+                    }
                 }
                 write_color(std::cout, pixel_color, samples_per_pixel);
             }
@@ -47,14 +47,16 @@ class camera {
     }
 
   private:
-    int image_height;    // Rendered image height
-    point3 center;       // Camera center
-    point3 pixel00_loc;  // Location of pixel 0, 0
-    vec3 pixel_delta_u;  // Offset to pixel to the right
-    vec3 pixel_delta_v;  // Offset to pixel below
-    vec3 u, v, w;        // Camera frame basis vectors
-    vec3 defocus_disk_u; // Defocus disk horizontal radius
-    vec3 defocus_disk_v; // Defocus disk vertical radius
+    int image_height;      // Rendered image height
+    int sqrt_spp;          // Square root of number of samples per pixel
+    double recip_sqrt_spp; // 1 / sqrt_spp
+    point3 center;         // Camera center
+    point3 pixel00_loc;    // Location of pixel 0, 0
+    vec3 pixel_delta_u;    // Offset to pixel to the right
+    vec3 pixel_delta_v;    // Offset to pixel below
+    vec3 u, v, w;          // Camera frame basis vectors
+    vec3 defocus_disk_u;   // Defocus disk horizontal radius
+    vec3 defocus_disk_v;   // Defocus disk vertical radius
 
     void initialize() {
         // Calculate the height of the image from the aspect ratio
@@ -68,6 +70,9 @@ class camera {
         auto h               = tan(theta / 2);
         auto viewport_height = 2 * h * focus_dist;
         auto viewport_width  = viewport_height * (static_cast<double>(image_width) / image_height);
+
+        sqrt_spp       = static_cast<int>(sqrt(samples_per_pixel));
+        recip_sqrt_spp = 1.0 / sqrt_spp;
 
         // Calcualte the u,v,w unit basis vectors
         w = unit_vector(lookfrom - lookat);
@@ -94,11 +99,12 @@ class camera {
         defocus_disk_v      = v * defocus_radius;
     }
 
-    ray get_ray(int i, int j) const {
-        // Get a randomly sampled camera ray for the pixel location i, j
+    ray get_ray(int i, int j, int s_i, int s_j) const {
+        // Get a randomly sampled camera ray for the pixel location i, j, originating from the camera defocus disk, and
+        // randomly sampled around the pixel location.
 
         auto pixel_center = pixel00_loc + (i * pixel_delta_u) + (j * pixel_delta_v);
-        auto pixel_sample = pixel_center + pixel_sample_square();
+        auto pixel_sample = pixel_center + pixel_sample_square(s_i, s_j);
 
         auto ray_origin    = (defocus_angle <= 0) ? center : defocus_disk_sample();
         auto ray_direction = pixel_sample - ray_origin;
@@ -107,11 +113,11 @@ class camera {
         return ray(ray_origin, ray_direction, ray_time);
     }
 
-    vec3 pixel_sample_square() const {
-        // Returns a random point in the square surrounding a pixel at the
-        // origin
-        auto px = -0.5 + random_double();
-        auto py = -0.5 + random_double();
+    vec3 pixel_sample_square(int s_i, int s_j) const {
+        // Returns a random point in the square surrounding a pixel at the origin, given
+        // the two subpixel indices.
+        auto px = -0.5 + recip_sqrt_spp * (s_i + random_double());
+        auto py = -0.5 + recip_sqrt_spp * (s_j + random_double());
         return (px * pixel_delta_u) + (py * pixel_delta_v);
     }
 
@@ -121,7 +127,7 @@ class camera {
         return center + (p[0] * defocus_disk_u) + (p[1] * defocus_disk_v);
     }
 
-    color ray_color(const ray &r, int depth, const hittable &world) const {
+    color ray_color(const ray& r, int depth, const hittable& world) const {
         hit_record rec;
 
         // If we've exceeded the ray bounce limit, no more light is gathered.
