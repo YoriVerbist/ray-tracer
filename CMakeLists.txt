@@ -39,6 +39,8 @@ set ( SOURCE_ONE_WEEKEND
   src/constant_medium.h
   src/perlin.h
   src/texture.h
+  src/onb.h
+  src/pdf.h
 
   src/main.cpp
 )

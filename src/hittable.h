@@ -16,7 +16,7 @@ class hit_record {
     double v;
     bool front_face;
 
-    void set_face_normal(const ray &r, const vec3 &outward_normal) {
+    void set_face_normal(const ray& r, const vec3& outward_normal) {
         // Sets the hit record normal vector
         // NOTE: the parameter `outward_normal` is assumed to have unit length
 
@@ -29,18 +29,22 @@ class hittable {
   public:
     virtual ~hittable() = default;
 
-    virtual bool hit(const ray &r, interval ray_t, hit_record &rec) const = 0;
+    virtual bool hit(const ray& r, interval ray_t, hit_record& rec) const = 0;
 
     virtual aabb bounding_box() const = 0;
+
+    virtual double pdf_value(const point3& o, const vec3& v) const { return 0.0; }
+
+    virtual vec3 random(const point3& o) const { return vec3(1, 0, 0); }
 };
 
 class translate : public hittable {
   public:
-    translate(shared_ptr<hittable> p, const vec3 &displacement) : object(p), offset(displacement) {
+    translate(shared_ptr<hittable> p, const vec3& displacement) : object(p), offset(displacement) {
         bbox = object->bounding_box() + offset;
     }
 
-    bool hit(const ray &r, interval ray_t, hit_record &rec) const override {
+    bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
         // Move the ray backwards by the offset
         ray offset_r(r.origin() - offset, r.direction(), r.time());
 
@@ -94,7 +98,7 @@ class rotate_y : public hittable {
         }
         bbox = aabb(min, max);
     }
-    bool hit(const ray &r, interval ray_t, hit_record &rec) const override {
+    bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
         // Change ray from world to object space
         auto origin    = r.origin();
         auto direction = r.direction();

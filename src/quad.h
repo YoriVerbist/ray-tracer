@@ -9,11 +9,13 @@
 
 class quad : public hittable {
   public:
-    quad(const point3 &_Q, const vec3 &_u, const vec3 &_v, shared_ptr<material> m) : Q(_Q), u(_u), v(_v), mat(m) {
+    quad(const point3& _Q, const vec3& _u, const vec3& _v, shared_ptr<material> m) : Q(_Q), u(_u), v(_v), mat(m) {
         auto n = cross(u, v);
         normal = unit_vector(n);
         D      = dot(normal, Q);
         w      = n / dot(n, n);
+
+        area = n.length();
 
         set_bounding_box();
     }
@@ -22,7 +24,7 @@ class quad : public hittable {
 
     aabb bounding_box() const override { return bbox; }
 
-    bool hit(const ray &r, interval ray_t, hit_record &rec) const override {
+    bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
         auto denom = dot(normal, r.direction());
 
         // No hit if the ray is parallel to the plane
@@ -53,7 +55,7 @@ class quad : public hittable {
         return true;
     }
 
-    virtual bool is_interior(double a, double b, hit_record &rec) const {
+    virtual bool is_interior(double a, double b, hit_record& rec) const {
         // Given the hit point in plane coordinates, return false if it is
         // outside the primitive, otherwise set the hit record UV coordinates
         // and return true.
@@ -66,6 +68,22 @@ class quad : public hittable {
         return true;
     }
 
+    double pdf_value(const point3& origin, const vec3& v) const override {
+        hit_record rec;
+        if (!this->hit(ray(origin, v), interval(0.001, infinity), rec))
+            return 0;
+
+        auto distance_squared = rec.t * rec.t * v.length_squared();
+        auto cosine           = fabs(dot(v, rec.normal) / v.length());
+
+        return distance_squared / (cosine * area);
+    }
+
+    vec3 random(const point3& origin) const override {
+        auto p = plane_origin + (random_double() * axis_A) + (random_double() * axis_B);
+        return p - origin;
+    }
+
   private:
     point3 Q;
     vec3 u, v;
@@ -74,9 +92,10 @@ class quad : public hittable {
     vec3 normal;
     double D;
     vec3 w;
+    double area;
 };
 
-inline shared_ptr<hittable_list> box(const point3 &a, const point3 &b, shared_ptr<material> mat) {
+inline shared_ptr<hittable_list> box(const point3& a, const point3& b, shared_ptr<material> mat) {
     // Returns the 3D box that contains the two oppisite vertices a & b
     auto sides = make_shared<hittable_list>();
 
