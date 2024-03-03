@@ -70,7 +70,7 @@ class quad : public hittable {
 
     double pdf_value(const point3& origin, const vec3& v) const override {
         hit_record rec;
-        if (!this->hit(ray(origin, v), interval(0.001, infinity), rec))
+        if (!this->hit(ray(), interval(0.001, infinity), rec))
             return 0;
 
         auto distance_squared = rec.t * rec.t * v.length_squared();
@@ -80,7 +80,7 @@ class quad : public hittable {
     }
 
     vec3 random(const point3& origin) const override {
-        auto p = plane_origin + (random_double() * axis_A) + (random_double() * axis_B);
+        auto p = Q + (random_double() * u) + (random_double() * v);
         return p - origin;
     }
 

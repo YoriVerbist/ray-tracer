@@ -44,7 +44,7 @@ class hittable_pdf : public pdf {
 
     double value(const vec3& direction) const override { return objects.pdf_value(origin, direction); }
 
-    vec3 generate() const override { objects.random(origin); }
+    vec3 generate() const override { return objects.random(origin); }
 
   private:
     const hittable& objects;
