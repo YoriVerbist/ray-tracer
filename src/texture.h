@@ -1,6 +1,7 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
+#include "color.h"
 #include "perlin.h"
 #include "rtw_stb_image.h"
 #include "rtweekend.h"
@@ -9,7 +10,7 @@ class texture {
   public:
     virtual ~texture() = default;
 
-    virtual color value(double u, double v, const point3 &p) const = 0;
+    virtual color value(double u, double v, const point3& p) const = 0;
 };
 
 class solid_color : public texture {
@@ -18,7 +19,7 @@ class solid_color : public texture {
 
     solid_color(double red, double green, double blue) : solid_color(color(red, green, blue)) {}
 
-    color value(double u, double v, const point3 &p) const override { return color_value; }
+    color value(double u, double v, const point3& p) const override { return color_value; }
 
   private:
     color color_value;
@@ -32,7 +33,7 @@ class checker_texture : public texture {
     checker_texture(double _scale, color c1, color c2)
         : inv_scale(1.0 / _scale), even(make_shared<solid_color>(c1)), odd(make_shared<solid_color>(c2)) {}
 
-    color value(double u, double v, const point3 &p) const override {
+    color value(double u, double v, const point3& p) const override {
         auto xInteger = static_cast<int>(std::floor(inv_scale * p.x()));
         auto yInteger = static_cast<int>(std::floor(inv_scale * p.y()));
         auto zInteger = static_cast<int>(std::floor(inv_scale * p.z()));
@@ -50,9 +51,9 @@ class checker_texture : public texture {
 
 class image_texture : public texture {
   public:
-    image_texture(const char *filename) : image(filename) {}
+    image_texture(const char* filename) : image(filename) {}
 
-    color value(double u, double v, const point3 &p) const override {
+    color value(double u, double v, const point3& p) const override {
         // If we have no texture data, then return solid cyan as a debugging
         // aid.
         if (image.height() <= 0)
@@ -80,7 +81,7 @@ class noise_texture : public texture {
 
     noise_texture(double sc) : scale(sc) {}
 
-    color value(double u, double v, const point3 &p) const override {
+    color value(double u, double v, const point3& p) const override {
         auto s = scale * p;
         return color(1, 1, 1) * 0.5 * (1 + sin(s.z() + 10 * noise.turb(s)));
     }
